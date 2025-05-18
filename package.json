@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mikemimik/megapixelmontage/issues"
   },
-  "homepage": "https://github.com/mikemimik/megapixelmontage#readme"
+  "homepage": "https://github.com/mikemimik/megapixelmontage#readme",
+  "dependencies": {
+    "fastify": "5.3.3"
+  }
 }
