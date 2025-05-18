@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/mikemimik/megapixelmontage#readme",
   "dependencies": {
+    "@fastify/react": "1.1.0",
     "@fastify/vite": "8.1.3",
     "fastify": "5.3.3",
     "react": "19.1.0",
