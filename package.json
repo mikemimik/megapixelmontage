@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "node server.js --dev",
     "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
