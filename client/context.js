@@ -1,0 +1,66 @@
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
+
+export default async (ctx) => {
+  if (ctx.server) {
+    const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
+    const command = new ListObjectsV2Command({
+      Bucket: bucket,
+    });
+    const response = await ctx.server.s3Client.send(command);
+
+    if (response.Contents) {
+      const groups = response.Contents.reduce((acc, object) => {
+        const parts = object.Key.split("/");
+        const collection = parts[0];
+        const last = parts[parts.length - 1];
+        const ALL = "all";
+        const GENERAL = "general";
+        const item = {
+          name: object.Key,
+          tag: object.ETag,
+        };
+
+        if (!acc[ALL]) {
+          acc[ALL] = [];
+        }
+
+        if (parts.length === 1) {
+          if (!acc[GENERAL]) {
+            acc[GENERAL] = [];
+          }
+
+          acc[GENERAL].push(item);
+          acc[ALL].push(item);
+          return acc;
+        }
+
+        if (Object.keys(acc).includes(collection)) {
+          acc[collection].push(item);
+          acc[ALL].push(item);
+          return acc;
+        }
+
+        if (!last) {
+          // INFO: last part is falsy
+          // create the collection
+          if (!acc[collection]) {
+            acc[collection] = [];
+          }
+        }
+
+        return acc;
+      }, {});
+
+      const { all, ...rest } = groups;
+      ctx.state.all = all;
+      ctx.state.groups = { ...rest };
+    }
+  }
+};
+
+export function state() {
+  return {
+    all: null,
+    groups: null,
+  };
+}
