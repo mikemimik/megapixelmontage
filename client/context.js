@@ -11,7 +11,9 @@ export default async (ctx) => {
     if (response.Contents) {
       const groups = response.Contents.reduce((acc, object) => {
         const parts = object.Key.split("/");
+        // TODO: figure out if there is a better way to do this double assign
         const collection = parts[0];
+        const first = parts[0];
         const last = parts[parts.length - 1];
         const ALL = "all";
         const GENERAL = "general";
@@ -19,6 +21,11 @@ export default async (ctx) => {
           name: object.Key,
           tag: object.ETag,
         };
+
+        // INFO: if filename starts with underscore, skip it
+        if (first.startsWith("_")) {
+          return acc;
+        }
 
         if (!acc[ALL]) {
           acc[ALL] = [];
