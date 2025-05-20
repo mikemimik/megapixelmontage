@@ -1,8 +1,7 @@
 import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
-// TODO: add `@fastify/caching` to enable to `cache` object decorated on the
-// server (to get leveraged by server side rendering)
+import { LRUCache } from "lru-cache";
 
 import { S3 } from "@aws-sdk/client-s3";
 
@@ -65,6 +64,15 @@ server.decorate(
       accessKeyId: server.getEnvs().DO_SPACE_ACCESS_KEY_ID,
       secretAccessKey: server.getEnvs().DO_SPACE_SECRET_KEY,
     },
+  }),
+);
+
+server.decorate(
+  "cache",
+  new LRUCache({
+    max: 1000,
+    ttl: 1000 * 60 * 5,
+    allowStale: false,
   }),
 );
 
