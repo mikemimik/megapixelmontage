@@ -1,6 +1,8 @@
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid2";
+import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
 import { useTheme } from "@mui/material/styles";
@@ -350,6 +352,87 @@ const MainSection = () => {
     </Box>
   );
 };
+// INFO: components/contact.js
+const Contact = () => {
+  return (
+    <Box>
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={{ xs: "flex-start", sm: "center" }}
+        flexDirection={{ xs: "column", sm: "row" }}
+      >
+        {/* <Box> */}
+        {/*   <Typography fontWeight={700} variant={"h5"} gutterBottom> */}
+        {/*     Interested in working with us? */}
+        {/*   </Typography> */}
+        {/*   <Typography>Hit us up and we'll get in touch with you.</Typography> */}
+        {/* </Box> */}
+      </Box>
+    </Box>
+  );
+};
+// INFO: components/footer.js
+const Footer = () => {
+  const theme = useTheme();
+  const { mode } = theme.palette;
+
+  return (
+    <Grid container spacing={2}>
+      <Grid size={{ xs: 12 }}>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          width={1}
+          flexDirection={{ xs: "column", sm: "row" }}
+        >
+          <Box
+            display={"flex"}
+            component="a"
+            href="/"
+            title="theFront"
+            width={80}
+          >
+            <Box
+              component={"img"}
+              src={
+                mode === "light"
+                  ? "https://assets.maccarianagency.com/the-front/logos/logo.svg"
+                  : "https://assets.maccarianagency.com/the-front/logos/logo-negative.svg"
+              }
+              height={1}
+              width={1}
+            />
+          </Box>
+          <Box display="flex" flexWrap={"wrap"} alignItems={"center"}>
+            <Box marginTop={1} marginRight={2}>
+              <Link
+                underline="none"
+                component="a"
+                href="/"
+                color="text.primary"
+                variant={"subtitle2"}
+              >
+                Home
+              </Link>
+            </Box>
+          </Box>
+        </Box>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <Typography
+          align={"center"}
+          variant={"subtitle2"}
+          color="text.secondary"
+          gutterBottom
+        >
+          &copy; megapixelmontage. 2025, OrionsBelt. All rights reserved
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
 
 // INFO: DEFAULT EXPORT
 export default function Index() {
@@ -393,12 +476,12 @@ export default function Index() {
           ></path>
         </Box>
         <Container>
-          <p>"Contact"</p>
+          <Contact />
         </Container>
       </Box>
       <Divider />
       <Container>
-        <p>"Footer"</p>
+        <Footer />
       </Container>
     </main>
   );
