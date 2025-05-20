@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 
 import { useTheme } from "@mui/material/styles";
 
-import { GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 import { useRouteContext } from "@fastify/react/client";
 
