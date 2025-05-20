@@ -94,7 +94,7 @@ server.get("/healthcheck", async (req, reply) => {
 });
 
 server.get("/invalidate-cache", async (req, reply) => {
-  req.cache.clear();
+  server.cache.clear();
 
   // TODO: limit the number of times this can happen
   // TODO: probably protect this endpoing
