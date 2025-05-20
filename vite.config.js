@@ -7,6 +7,6 @@ export default {
   root: resolve(import.meta.dirname, "client"),
   plugins: [viteReact(), viteFastifyReact()],
   ssr: {
-    external: ["use-sync-external-store"],
+    noExternal: ["@mui/*"],
   },
 };
