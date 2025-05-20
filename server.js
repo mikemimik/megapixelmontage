@@ -5,22 +5,6 @@ import { LRUCache } from "lru-cache";
 
 import { S3 } from "@aws-sdk/client-s3";
 
-const s3Client = new S3({
-  forcePathStyle: false,
-  endpoint: "https://tor1.digitaloceanspaces.com",
-  region: "tor1",
-  credentials: {
-    accessKeyId: server.getEnvs().DO_SPACE_ACCESS_KEY_ID,
-    secretAccessKey: server.getEnvs().DO_SPACE_SECRET_KEY,
-  },
-});
-
-const cache = new LRUCache({
-  max: 1000,
-  ttl: 1000 * 60 * 5,
-  allowStale: false,
-});
-
 const server = Fastify({
   logger: {
     transport: {
@@ -70,9 +54,25 @@ await server.register(FastifyVite, {
 
 await server.vite.ready();
 
+const s3Client = new S3({
+  forcePathStyle: false,
+  endpoint: "https://tor1.digitaloceanspaces.com",
+  region: "tor1",
+  credentials: {
+    accessKeyId: server.getEnvs().DO_SPACE_ACCESS_KEY_ID,
+    secretAccessKey: server.getEnvs().DO_SPACE_SECRET_KEY,
+  },
+});
+
 if (!server.s3Client) {
   server.decorate("s3Client", s3Client);
 }
+
+const cache = new LRUCache({
+  max: 1000,
+  ttl: 1000 * 60 * 5,
+  allowStale: false,
+});
 
 if (!server.cache) {
   server.decorate("cache", cache);
