@@ -68,4 +68,14 @@ server.decorate(
   }),
 );
 
-await server.listen({ port: server.getEnvs().PORT });
+server.get("/healthcheck", async (req, reply) => {
+  const isReady = await server.ready();
+
+  if (isReady) {
+    return reply.code(200).send();
+  } else {
+    return reply.code(503).send();
+  }
+});
+
+await server.listen({ host: "0.0.0.0", port: server.getEnvs().PORT });
