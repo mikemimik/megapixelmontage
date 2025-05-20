@@ -16,10 +16,6 @@ export const serverOnly = true;
 export async function getData(ctx) {
   console.group("getData");
   if (ctx.server) {
-    console.log("ctx:", ctx);
-
-    const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
-
     if (ctx.state.all) {
       const data = {};
 
@@ -31,6 +27,7 @@ export async function getData(ctx) {
             data[item.name] = value;
           } else {
             console.log("cache miss:", item.name);
+            const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
             const command = new GetObjectCommand({
               Bucket: bucket,
               Key: item.name,
@@ -47,6 +44,7 @@ export async function getData(ctx) {
           }
         } catch (err) {
           console.error(err);
+          console.groupEnd();
           throw err;
         }
       }
