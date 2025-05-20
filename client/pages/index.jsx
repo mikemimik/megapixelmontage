@@ -1,15 +1,5 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid2";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
-
-import { useTheme } from "@mui/material/styles";
-
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-
-import { useRouteContext } from "@fastify/react/client";
 
 import Footer from "../components/Footer";
 import Contact from "../components/Contact";
@@ -17,6 +7,10 @@ import MainSection from "../components/MainSection";
 import Hero from "../components/Hero";
 import Container from "../components/Container";
 import Partners from "../components/Partners";
+
+import { useTheme } from "@mui/material/styles";
+
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 export const serverOnly = true;
 
