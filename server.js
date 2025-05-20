@@ -93,4 +93,12 @@ server.get("/healthcheck", async (req, reply) => {
   }
 });
 
+server.get("/invalidate-cache", async (req, reply) => {
+  req.cache.clear();
+
+  // TODO: limit the number of times this can happen
+  // TODO: probably protect this endpoing
+  return reply.code(200).send({ cache: "clear" });
+});
+
 await server.listen({ host: "0.0.0.0", port: server.getEnvs().PORT });
