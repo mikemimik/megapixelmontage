@@ -4,6 +4,10 @@
   "description": "Photography Website",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10.9.2"
+  },
   "scripts": {
     "dev": "node server.js --dev",
     "build": "vite build",
