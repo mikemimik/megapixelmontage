@@ -21,22 +21,32 @@ export async function getData(ctx) {
     if (ctx.state.all) {
       const data = {};
 
-      // TODO: add caching using `@fastify/caching`
-      // this will provide a `ctx.server.cache` object to interact with
       for (const item of ctx.state.all) {
-        const command = new GetObjectCommand({
-          Bucket: bucket,
-          Key: item.name,
-        });
-        const response = await ctx.server.s3Client.send(command);
+        try {
+          const value = ctx.server.cache.get(item.name);
+          if (value) {
+            console.log("cache hit:", item.name, value);
+            data[item.name] = value;
+          } else {
+            console.log("cache miss:", item.name);
+            const command = new GetObjectCommand({
+              Bucket: bucket,
+              Key: item.name,
+            });
+            const response = await ctx.server.s3Client.send(command);
 
-        const { Metadata } = response;
-        console.log("metadata:", Metadata);
+            const { Metadata } = response;
 
-        const { title = "Image Title", description = "Image Description" } =
-          Metadata;
+            const { title = "Image Title", description = "Image Description" } =
+              Metadata;
 
-        data[item.name] = { title, description };
+            ctx.server.cache.set(item.name, { title, description });
+            data[item.name] = { title, description };
+          }
+        } catch (err) {
+          console.error(err);
+          throw err;
+        }
       }
 
       console.groupEnd();
@@ -296,7 +306,6 @@ const MainSection = () => {
   const { state, data } = useRouteContext();
 
   console.group("MainSection");
-  console.log("state.groups:", state.groups);
   console.log("data:", data);
   console.groupEnd();
 
