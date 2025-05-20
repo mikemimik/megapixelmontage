@@ -347,11 +347,7 @@ export default function Index() {
   const theme = useTheme();
   return (
     <main>
-      <Hero
-        url={
-          "https://megapixelmontage.ca/content/images/size/w1920/2025/03/DSC03061.jpg"
-        }
-      />
+      <Hero url={"https://cdn.megapixelmontage.ca/_hero-header.jpg"} />
       <Container>
         <Partners />
       </Container>
