@@ -1,7 +1,7 @@
-import { responsiveFontSizes } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
-export { light, dark } from "./palette";
-export { shadows } from "./shadows";
+import { light, dark } from "./palette";
+import { shadows } from "./shadows";
 
 export const getTheme = (mode, themeToggler) =>
   responsiveFontSizes(
