@@ -77,12 +77,17 @@ server.decorate(
 );
 
 server.get("/healthcheck", async (req, reply) => {
-  const isReady = await server.ready();
+  try {
+    const isReady = await server.ready();
 
-  if (isReady) {
-    return reply.code(200).send();
-  } else {
-    return reply.code(503).send();
+    if (isReady) {
+      return reply.code(200).send({ health: "ok" });
+    } else {
+      return reply.code(503).send({ health: "not-ready" });
+    }
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 });
 
