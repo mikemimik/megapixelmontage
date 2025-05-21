@@ -58,12 +58,15 @@ function createGroups(objects = []) {
 
 export default async (ctx) => {
   console.group("context.js");
-  console.log("server:", !!ctx.server);
+  console.log("ctx.server", !!ctx.server);
+  console.groupEnd();
+
   if (ctx.server) {
+    const { log } = ctx.server;
     const cachedGroups = ctx.server.cache.get(IMAGE_LIST_KEY);
 
     if (!cachedGroups) {
-      console.log("cache miss:", IMAGE_LIST_KEY, cachedGroups);
+      log.warn(`cache miss: ${IMAGE_LIST_KEY}`);
       const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
 
       const command = new ListObjectsV2Command({
@@ -80,13 +83,12 @@ export default async (ctx) => {
         ctx.state.groups = { ...rest };
       }
     } else {
-      console.log("cache hit:", IMAGE_LIST_KEY, cachedGroups);
+      log.info(`cache hit: ${IMAGE_LIST_KEY}}`);
       const { all, ...rest } = cachedGroups;
       ctx.state.all = all;
       ctx.state.groups = { ...rest };
     }
   }
-  console.groupEnd();
 };
 
 export function state() {
