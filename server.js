@@ -1,7 +1,7 @@
 import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
-import { LRUCache } from "lru-cache";
+import TTLCache from "@isaacs/ttlcache";
 
 import { S3 } from "@aws-sdk/client-s3";
 
@@ -68,10 +68,13 @@ if (!server.s3Client) {
   server.decorate("s3Client", s3Client);
 }
 
-const cache = new LRUCache({
-  max: 1000,
-  ttl: 1000 * 60 * 5,
-  allowStale: false,
+const cache = new TTLCache({
+  max: 200,
+  ttl: 1 * 60 * 60 * 1_000, // one hour
+  updateAgeOnGet: true,
+  dispose(value, key, reason) {
+    server.log.info(`cache:dispose - ${key} - ${reason}`);
+  },
 });
 
 if (!server.cache) {
