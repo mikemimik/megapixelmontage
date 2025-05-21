@@ -65,7 +65,6 @@ export function getMeta() {
   };
 }
 
-// INFO: DEFAULT EXPORT
 export default function Index() {
   const theme = useTheme();
   return (
