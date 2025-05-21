@@ -8,10 +8,6 @@ import { useRouteContext } from "@fastify/react/client";
 const MainSection = () => {
   const { state, data } = useRouteContext();
 
-  console.group("MainSection");
-  console.log("data:", data);
-  console.groupEnd();
-
   const [leftGrid, middleGrid, rightGrid] = state.all.reduce(
     (acc, item, index) => {
       const left = acc[0] ?? [];
