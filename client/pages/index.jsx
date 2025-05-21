@@ -12,7 +12,8 @@ import { useTheme } from "@mui/material/styles";
 
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 
-export const serverOnly = true;
+// export const serverOnly = true;
+export const streaming = true;
 
 export async function getData(ctx) {
   console.group("pages/index.jsx::getData");
@@ -69,6 +70,7 @@ export function getMeta() {
 
 export default function Index() {
   const theme = useTheme();
+
   return (
     <main>
       <Hero url={"https://cdn.megapixelmontage.ca/_hero-header.jpg"} />
