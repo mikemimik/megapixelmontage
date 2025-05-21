@@ -15,8 +15,13 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 export const serverOnly = true;
 
 export async function getData(ctx) {
-  console.group("getData");
+  console.group("pages/index.jsx::getData");
+  console.log("ctx.server", !!ctx.server);
+  console.groupEnd();
+
   if (ctx.server) {
+    const { log } = ctx.server;
+
     if (ctx.state.all) {
       const data = {};
 
@@ -24,10 +29,10 @@ export async function getData(ctx) {
         try {
           const value = ctx.server.cache.get(item.name);
           if (value) {
-            console.log("cache hit:", item.name, value);
+            log.info(`cache hit: ${item.name}`);
             data[item.name] = value;
           } else {
-            console.log("cache miss:", item.name);
+            log.warn(`cache miss: ${item.name}`);
             const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
             const command = new GetObjectCommand({
               Bucket: bucket,
@@ -44,17 +49,14 @@ export async function getData(ctx) {
             data[item.name] = { title, description };
           }
         } catch (err) {
-          console.error(err);
-          console.groupEnd();
+          log.error(err.message);
           throw err;
         }
       }
 
-      console.groupEnd();
       return data;
     }
 
-    console.groupEnd();
     return {};
   }
 }
