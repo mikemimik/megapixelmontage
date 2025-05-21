@@ -83,7 +83,7 @@ export default async (ctx) => {
         ctx.state.groups = { ...rest };
       }
     } else {
-      log.info(`cache hit: ${IMAGE_LIST_KEY}}`);
+      log.info(`cache hit: ${IMAGE_LIST_KEY}`);
       const { all, ...rest } = cachedGroups;
       ctx.state.all = all;
       ctx.state.groups = { ...rest };
