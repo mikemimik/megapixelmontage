@@ -40,7 +40,8 @@
     "fastify": "5.3.3",
     "loadable-image": "3.3.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "styled-components": "6.1.18"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.4.1",
