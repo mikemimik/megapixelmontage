@@ -38,6 +38,7 @@
     "@unhead/react": "2.0.9",
     "aos": "2.3.4",
     "fastify": "5.3.3",
+    "loadable-image": "3.3.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
