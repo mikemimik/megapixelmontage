@@ -22,6 +22,15 @@ hence fullstack application.
 3. `npm install` to install dependencies
 4. Run the `npm run dev` script to run the development server
 
+### Environment Variables
+
+| Name                   | Description                                                        |
+| ---------------------- | ------------------------------------------------------------------ |
+| PORT                   | Port value the server will listen on when run. Defaults to `3002`. |
+| DO_SPACE_ACCESS_KEY_ID | The DigitalOcean access key ID for the Space provisioned.          |
+| DO_SPACE_SECRET_KEY    | The DigitalOcean secret key for the Space provisioned.             |
+| DO_SPACE_BUCKET        | The name of the DigitalOcean Space provisioned.                    |
+
 ### Production Instance locally
 
 > [!NOTE]
