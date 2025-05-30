@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid2";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { PhotoProvider } from "react-photo-view";
 
