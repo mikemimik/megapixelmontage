@@ -53,27 +53,30 @@ export default function PhotoGrid() {
   }, [selectedCollection]);
 
   const [leftPhotos, middlePhotos, rightPhotos] = useMemo(() => {
-    return collection.reduce((acc, item, index) => {
-      const left = acc[0] ?? [];
-      const middle = acc[1] ?? [];
-      const right = acc[2] ?? [];
+    return collection.reduce(
+      (acc, item, index) => {
+        const left = acc[0] ?? [];
+        const middle = acc[1] ?? [];
+        const right = acc[2] ?? [];
 
-      const imageData = {
-        src: `https://cdn.${domain}/${item.name}`,
-        description: data[item.name].description,
-        title: data[item.name].title,
-      };
-      const sort = index % 3;
-      if (sort === 0) {
-        left.push(imageData);
-      } else if (sort === 1) {
-        middle.push(imageData);
-      } else if (sort === 2) {
-        right.push(imageData);
-      }
+        const imageData = {
+          src: `https://cdn.${domain}/${item.name}`,
+          description: data[item.name].description,
+          title: data[item.name].title,
+        };
+        const sort = index % 3;
+        if (sort === 0) {
+          left.push(imageData);
+        } else if (sort === 1) {
+          middle.push(imageData);
+        } else if (sort === 2) {
+          right.push(imageData);
+        }
 
-      return [left, middle, right];
-    }, []);
+        return [left, middle, right];
+      },
+      [[], [], []],
+    );
   }, [collection]);
 
   return (
