@@ -96,7 +96,9 @@ export default function PhotoGrid() {
       >
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 4 }}>
-            <AsyncImage photo={leftPhotos[0]} initialInView={true} />
+            {leftPhotos[0] ? (
+              <AsyncImage photo={leftPhotos[0]} initialInView={true} />
+            ) : null}
             {leftPhotos.length
               ? leftPhotos
                   .slice(1)
@@ -106,9 +108,9 @@ export default function PhotoGrid() {
               : null}
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            {middlePhotos[0] && (
+            {middlePhotos[0] ? (
               <AsyncImage photo={middlePhotos[0]} initialInView={true} />
-            )}
+            ) : null}
             {middlePhotos.length
               ? middlePhotos
                   .slice(1)
@@ -118,9 +120,9 @@ export default function PhotoGrid() {
               : null}
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            {rightPhotos[0] && (
+            {rightPhotos[0] ? (
               <AsyncImage photo={rightPhotos[0]} initialInView={true} />
-            )}
+            ) : null}
             {rightPhotos.length
               ? rightPhotos
                   .slice(1)
