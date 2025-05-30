@@ -28,6 +28,7 @@ const Footer = () => {
           >
             <Box
               component={"img"}
+              alt="theme logo"
               src={
                 mode === "light"
                   ? "https://assets.maccarianagency.com/the-front/logos/logo.svg"
