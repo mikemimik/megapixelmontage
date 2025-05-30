@@ -3,17 +3,18 @@ import Divider from "@mui/material/Divider";
 
 import Footer from "../components/Footer";
 import Contact from "../components/Contact";
-import MainSection from "../components/MainSection";
 import Hero from "../components/Hero";
 import Container from "../components/Container";
 import Partners from "../components/Partners";
+import PhotoGrid from "../components/PhotoGrid";
 
 import { useTheme } from "@mui/material/styles";
 
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { Suspense } from "react";
 
 // export const serverOnly = true;
-export const streaming = true;
+// export const streaming = true;
 
 export async function getData(ctx) {
   console.group("pages/index.jsx::getData");
@@ -78,7 +79,9 @@ export default function Index() {
         <Partners />
       </Container>
       <Container>
-        <MainSection />
+        <Suspense fallback={<p>Loading...</p>}>
+          <PhotoGrid />
+        </Suspense>
       </Container>
       <Box
         position={"relative"}
