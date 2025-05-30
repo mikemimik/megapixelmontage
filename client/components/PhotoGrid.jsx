@@ -42,7 +42,7 @@ const Overlay = ({ photo }) => {
 };
 
 export default function PhotoGrid() {
-  const { state, data } = useRouteContext();
+  const { state, data, domain } = useRouteContext();
   const [selectedCollection, setSelectedCollection] = useState("all");
 
   const collection = useMemo(() => {
@@ -61,7 +61,7 @@ export default function PhotoGrid() {
       const right = acc[2] ?? [];
 
       const imageData = {
-        src: `https://cdn.megapixelmontage.ca/${item.name}`,
+        src: `https://cdn.${domain}/${item.name}`,
         description: data[item.name].description,
         title: data[item.name].title,
       };
