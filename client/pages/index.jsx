@@ -13,8 +13,13 @@ import { useTheme } from "@mui/material/styles";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Suspense } from "react";
 
+// INFO: can't use `serverOnly=true` because then the scroll to lazy load images
+// doesn't kick in because the server doesn't sent javascript in this mode.
 // export const serverOnly = true;
-// export const streaming = true;
+
+// INFO: when the client receives the javascript the whole page rerenders
+// TODO: figure out how to stop whole rerender of page
+export const streaming = true;
 
 export async function getData(ctx) {
   console.group("pages/index.jsx::getData");
