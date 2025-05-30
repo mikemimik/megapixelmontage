@@ -72,7 +72,7 @@ const cache = new TTLCache({
   max: 200,
   ttl: 1 * 60 * 60 * 1_000, // one hour
   updateAgeOnGet: true,
-  dispose(value, key, reason) {
+  dispose(_value, key, reason) {
     server.log.info(`cache:dispose - ${key} - ${reason}`);
   },
 });
@@ -81,7 +81,7 @@ if (!server.cache) {
   server.decorate("cache", cache);
 }
 
-server.get("/healthcheck", async (req, reply) => {
+server.get("/healthcheck", async (_req, reply) => {
   try {
     const isReady = await server.ready();
 
@@ -96,7 +96,7 @@ server.get("/healthcheck", async (req, reply) => {
   }
 });
 
-server.get("/invalidate-cache", async (req, reply) => {
+server.get("/invalidate-cache", async (_req, reply) => {
   server.cache.clear();
 
   // TODO: limit the number of times this can happen

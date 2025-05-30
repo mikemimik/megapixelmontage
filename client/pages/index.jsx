@@ -3,16 +3,22 @@ import Divider from "@mui/material/Divider";
 
 import Footer from "../components/Footer";
 import Contact from "../components/Contact";
-import MainSection from "../components/MainSection";
 import Hero from "../components/Hero";
 import Container from "../components/Container";
 import Partners from "../components/Partners";
+import PhotoGrid from "../components/PhotoGrid";
 
 import { useTheme } from "@mui/material/styles";
 
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { Suspense } from "react";
 
+// INFO: can't use `serverOnly=true` because then the scroll to lazy load images
+// doesn't kick in because the server doesn't sent javascript in this mode.
 // export const serverOnly = true;
+
+// INFO: when the client receives the javascript the whole page rerenders
+// TODO: figure out how to stop whole rerender of page
 export const streaming = true;
 
 export async function getData(ctx) {
@@ -78,7 +84,9 @@ export default function Index() {
         <Partners />
       </Container>
       <Container>
-        <MainSection />
+        <Suspense fallback={<p>Loading...</p>}>
+          <PhotoGrid />
+        </Suspense>
       </Container>
       <Box
         position={"relative"}
