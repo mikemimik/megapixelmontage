@@ -1,11 +1,15 @@
+import { useMemo, useState } from "react";
+
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid2";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { PhotoProvider } from "react-photo-view";
 
 import AsyncImage from "./AsyncImage";
-import ImageContainer from "./ImageContainer";
-import Image from "./Image";
+import Container from "./Container";
+import Collections from "./Collections";
 
 import { useRouteContext } from "@fastify/react/client";
 
@@ -39,9 +43,19 @@ const Overlay = ({ photo }) => {
 
 export default function PhotoGrid() {
   const { state, data } = useRouteContext();
+  const [selectedCollection, setSelectedCollection] = useState("all");
 
-  const [leftPhotos, middlePhotos, rightPhotos] = state.all.reduce(
-    (acc, item, index) => {
+  const collection = useMemo(() => {
+    switch (selectedCollection) {
+      case "all":
+        return state.all;
+      default:
+        return state.groups[selectedCollection];
+    }
+  }, [selectedCollection]);
+
+  const [leftPhotos, middlePhotos, rightPhotos] = useMemo(() => {
+    return collection.reduce((acc, item, index) => {
       const left = acc[0] ?? [];
       const middle = acc[1] ?? [];
       const right = acc[2] ?? [];
@@ -61,12 +75,19 @@ export default function PhotoGrid() {
       }
 
       return [left, middle, right];
-    },
-    [],
-  );
+    }, []);
+  }, [collection]);
 
   return (
     <Box>
+      <Container paddingY="" sx={{ paddingBottom: { xs: 4, sm: 6, md: 8 } }}>
+        <Collections
+          collections={["all", ...Object.keys(state.groups)]}
+          onChange={(value) => {
+            setSelectedCollection(value);
+          }}
+        />
+      </Container>
       <PhotoProvider
         overlayRender={({ overlay }) => {
           return <Overlay photo={overlay} />;
@@ -75,21 +96,37 @@ export default function PhotoGrid() {
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 4 }}>
             <AsyncImage photo={leftPhotos[0]} initialInView={true} />
-            {leftPhotos.slice(1).map((photo, index) => (
-              <AsyncImage key={index} photo={photo} />
-            ))}
+            {leftPhotos.length
+              ? leftPhotos
+                  .slice(1)
+                  .map((photo, index) => (
+                    <AsyncImage key={index} photo={photo} />
+                  ))
+              : null}
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            <AsyncImage photo={middlePhotos[0]} initialInView={true} />
-            {middlePhotos.slice(1).map((photo, index) => (
-              <AsyncImage key={index} photo={photo} />
-            ))}
+            {middlePhotos[0] && (
+              <AsyncImage photo={middlePhotos[0]} initialInView={true} />
+            )}
+            {middlePhotos.length
+              ? middlePhotos
+                  .slice(1)
+                  .map((photo, index) => (
+                    <AsyncImage key={index} photo={photo} />
+                  ))
+              : null}
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            <AsyncImage photo={rightPhotos[0]} initialInView={true} />
-            {rightPhotos.slice(1).map((photo, index) => (
-              <AsyncImage key={index} photo={photo} />
-            ))}
+            {rightPhotos[0] && (
+              <AsyncImage photo={rightPhotos[0]} initialInView={true} />
+            )}
+            {rightPhotos.length
+              ? rightPhotos
+                  .slice(1)
+                  .map((photo, index) => (
+                    <AsyncImage key={index} photo={photo} />
+                  ))
+              : null}
           </Grid>
         </Grid>
       </PhotoProvider>
