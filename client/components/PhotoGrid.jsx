@@ -37,9 +37,6 @@ const Overlay = ({ photo }) => {
   );
 };
 
-// TODO: determine if this is necessary
-export const clientOnly = true;
-
 export default function PhotoGrid() {
   const { state, data } = useRouteContext();
 

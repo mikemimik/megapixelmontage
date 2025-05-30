@@ -27,9 +27,6 @@ function FallbackLoader() {
   );
 }
 
-// TODO: determine if this is necessary
-// export const clientOnly = true;
-
 export default function Image({ inView, photo }) {
   const theme = useTheme();
 

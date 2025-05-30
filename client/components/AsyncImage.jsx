@@ -3,9 +3,6 @@ import { InView } from "react-intersection-observer";
 import ImageContainer from "./ImageContainer";
 import Image from "./Image";
 
-// TODO: determine if this is necessary
-// export const clientOnly = true;
-
 export default function AsyncImage({ photo, initialInView = false }) {
   return (
     <InView rootMargin="600px 0px" initialInView={initialInView} triggerOnce>
