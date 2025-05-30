@@ -61,6 +61,11 @@ export default async (ctx) => {
   console.log("ctx.server", !!ctx.server);
   console.groupEnd();
 
+  // INFO: set default context values
+  ctx.domain = "megapixelmontage.ca";
+  ctx.state.all = [];
+  ctx.state.groups = {};
+
   if (ctx.server) {
     const { log } = ctx.server;
     const cachedGroups = ctx.server.cache.get(IMAGE_LIST_KEY);
@@ -84,11 +89,8 @@ export default async (ctx) => {
           ctx.state.groups = { ...rest };
         }
       } catch (err) {
-        log.error("failed to fetch list bucket");
+        log.error(`failed to fetch list bucket: ${err.message}`);
         console.error(err);
-
-        ctx.state.all = [];
-        ctx.state.groups = {};
       }
     } else {
       log.info(`cache hit: ${IMAGE_LIST_KEY}`);
