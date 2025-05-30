@@ -76,6 +76,12 @@ export function getMeta() {
         content:
           "Photography website for Megapixel Montage; street style photography images.",
       },
+      {
+        name: "image",
+        content: "https://cdn.megapixelmontage.ca/_hero-header-min.jpg",
+      },
+      { name: "type", content: "website" },
+      { name: "url", content: "https://megapixelmontage.ca" },
     ],
   };
 }
