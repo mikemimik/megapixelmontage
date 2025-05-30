@@ -69,18 +69,25 @@ export default async (ctx) => {
       log.warn(`cache miss: ${IMAGE_LIST_KEY}`);
       const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
 
-      const command = new ListObjectsV2Command({
-        Bucket: bucket,
-      });
+      try {
+        const command = new ListObjectsV2Command({
+          Bucket: bucket,
+        });
 
-      const response = await ctx.server.s3Client.send(command);
+        const response = await ctx.server.s3Client.send(command);
 
-      if (response.Contents) {
-        const groups = createGroups(response.Contents);
-        ctx.server.cache.set(IMAGE_LIST_KEY, groups);
-        const { all, ...rest } = groups;
-        ctx.state.all = all;
-        ctx.state.groups = { ...rest };
+        if (response.Contents) {
+          const groups = createGroups(response.Contents);
+          ctx.server.cache.set(IMAGE_LIST_KEY, groups);
+          const { all, ...rest } = groups;
+          ctx.state.all = all;
+          ctx.state.groups = { ...rest };
+        }
+      } catch (err) {
+        log.error(err, "failed to fetch list bucket");
+
+        ctx.state.all = [];
+        ctx.state.groups = {};
       }
     } else {
       log.info(`cache hit: ${IMAGE_LIST_KEY}`);
