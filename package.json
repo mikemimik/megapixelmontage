@@ -9,8 +9,10 @@
     "npm": ">=10.9.2"
   },
   "scripts": {
-    "dev": "node server.js --dev",
+    "start": "node server.js",
+    "dev": "npm run start -- --dev",
     "build": "vite build",
+    "preview": "npm run build && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
