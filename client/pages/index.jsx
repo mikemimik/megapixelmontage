@@ -5,7 +5,6 @@ import Footer from "../components/Footer";
 import Contact from "../components/Contact";
 import Hero from "../components/Hero";
 import Container from "../components/Container";
-import Partners from "../components/Partners";
 import PhotoGrid from "../components/PhotoGrid";
 
 import { useTheme } from "@mui/material/styles";
@@ -80,9 +79,6 @@ export default function Index() {
   return (
     <main>
       <Hero url={"https://cdn.megapixelmontage.ca/_hero-header.jpg"} />
-      <Container>
-        <Partners />
-      </Container>
       <Container>
         <Suspense fallback={<p>Loading...</p>}>
           <PhotoGrid />
