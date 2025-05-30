@@ -14,6 +14,7 @@ const Placeholder = forwardRef((props, ref) => {
         boxSizing: "border-box",
         backgroundSize: "cover",
         position: "relative",
+        justifyContent: "center",
       }}
     />
   );
@@ -25,7 +26,7 @@ export default function ImageContainer({ ref, children }) {
       <Box
         sx={{
           marginBottom: { xs: 2, sm: 3 },
-          minHeight: { xs: 300, sm: 400, md: 200 },
+          minHeight: { xs: 200, sm: 400, md: 200 },
         }}
       >
         <Box
