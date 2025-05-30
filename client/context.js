@@ -84,7 +84,8 @@ export default async (ctx) => {
           ctx.state.groups = { ...rest };
         }
       } catch (err) {
-        log.error(err, "failed to fetch list bucket");
+        log.error("failed to fetch list bucket");
+        console.error(err);
 
         ctx.state.all = [];
         ctx.state.groups = {};
