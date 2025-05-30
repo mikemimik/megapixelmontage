@@ -24,8 +24,10 @@ hence fullstack application.
 
 ### Production Instance locally
 
-> [!NOTE] Run steps 1. through 3. above
+> [!NOTE]
+> Run steps 1. through 3. above
 
 1. Run the `npm run preview` script to generate a production server
 
-> [!IMPORTANT] There is no hot reloading with this experience.
+> [!IMPORTANT]
+> There is no hot reloading with this experience.
