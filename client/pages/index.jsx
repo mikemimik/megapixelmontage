@@ -7,6 +7,7 @@ import Hero from "../components/Hero";
 import Container from "../components/Container";
 import PhotoGrid from "../components/PhotoGrid";
 
+import { useRouteContext } from "@fastify/react/client";
 import { useTheme } from "@mui/material/styles";
 
 import { GetObjectCommand } from "@aws-sdk/client-s3";
@@ -67,7 +68,7 @@ export async function getData(ctx) {
   }
 }
 
-export function getMeta() {
+export function getMeta(ctx) {
   return {
     title: "Megapixel Montage",
     meta: [
@@ -78,20 +79,21 @@ export function getMeta() {
       },
       {
         name: "image",
-        content: "https://cdn.megapixelmontage.ca/_hero-header-min.jpg",
+        content: `https://cdn.${ctx.domain}/_hero-header-min.jpg`,
       },
       { name: "type", content: "website" },
-      { name: "url", content: "https://megapixelmontage.ca" },
+      { name: "url", content: `https://${ctx.domain}` },
     ],
   };
 }
 
 export default function Index() {
   const theme = useTheme();
+  const { domain } = useRouteContext();
 
   return (
     <main>
-      <Hero url={"https://cdn.megapixelmontage.ca/_hero-header.jpg"} />
+      <Hero url={`https://cdn.${domain}/_hero-header.jpg`} />
       <Container>
         <Suspense fallback={<p>Loading...</p>}>
           <PhotoGrid />
