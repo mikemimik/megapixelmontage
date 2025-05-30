@@ -70,6 +70,13 @@ export async function getData(ctx) {
 export function getMeta() {
   return {
     title: "Megapixel Montage",
+    meta: [
+      {
+        name: "description",
+        content:
+          "Photography website for Megapixel Montage; street style photography images.",
+      },
+    ],
   };
 }
 
