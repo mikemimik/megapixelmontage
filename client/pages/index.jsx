@@ -74,15 +74,17 @@ export function getMeta(ctx) {
     meta: [
       {
         name: "description",
+        property: "og:description",
         content:
           "Photography website for Megapixel Montage; street style photography images.",
       },
       {
         name: "image",
+        property: "og:image",
         content: `https://cdn.${ctx.domain}/_hero-header-min.jpg`,
       },
-      { name: "type", content: "website" },
-      { name: "url", content: `https://${ctx.domain}` },
+      { name: "type", property: "og:type", content: "website" },
+      { name: "url", property: "og:url", content: `https://${ctx.domain}` },
     ],
   };
 }
