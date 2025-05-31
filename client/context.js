@@ -57,15 +57,13 @@ function createGroups(objects = []) {
 }
 
 export default async (ctx) => {
-  console.group("context.js");
-  console.log("ctx.server", !!ctx.server);
-  console.groupEnd();
-
   // INFO: set default context values
   ctx.domain = "megapixelmontage.ca";
 
   if (ctx.server) {
     const { log } = ctx.server;
+    log.info({ "ctx.server": !!ctx.server }, "context.js");
+
     const cachedGroups = ctx.server.cache.get(IMAGE_LIST_KEY);
 
     if (!cachedGroups) {
@@ -87,8 +85,7 @@ export default async (ctx) => {
           ctx.state.groups = { ...rest };
         }
       } catch (err) {
-        log.error(`failed to fetch list bucket: ${err.message}`);
-        console.error(err);
+        log.error({ err }, `failed to fetch list bucket: ${err.message}`);
         ctx.state.all = [];
         ctx.state.groups = {};
       }
