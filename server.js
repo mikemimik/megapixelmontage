@@ -6,11 +6,9 @@ import TTLCache from "@isaacs/ttlcache";
 import { S3 } from "@aws-sdk/client-s3";
 
 const server = Fastify({
-  logger: {
-    transport: {
-      target: "@fastify/one-line-logger",
-    },
-  },
+  logger: process.argv.includes("--dev")
+    ? { transport: { target: "@fastify/one-line-logger" } }
+    : true,
 });
 
 await server.register(FastifyEnv, {
