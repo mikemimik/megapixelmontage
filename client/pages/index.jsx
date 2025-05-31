@@ -22,12 +22,9 @@ import { Suspense } from "react";
 export const streaming = true;
 
 export async function getData(ctx) {
-  console.group("pages/index.jsx::getData");
-  console.log("ctx.server", !!ctx.server);
-  console.groupEnd();
-
   if (ctx.server) {
     const { log } = ctx.server;
+    log.info({ "ctx.server": !!ctx.server }, "pages/index.jsx::getData");
 
     if (ctx.state.all) {
       const data = {};
@@ -56,7 +53,7 @@ export async function getData(ctx) {
             data[item.name] = { title, description };
           }
         } catch (err) {
-          log.error(err.message);
+          log.error({ err }, err.message);
           throw err;
         }
       }
