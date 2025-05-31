@@ -44,14 +44,7 @@ await server.register(FastifyEnv, {
   },
 });
 
-await server.register(FastifyVite, {
-  root: import.meta.dirname, // where to look for vite.config.js
-  dev: process.argv.includes("--dev"),
-  renderer: "@fastify/react",
-});
-
-await server.vite.ready();
-
+// INFO: decorate with s3client
 const s3Client = new S3({
   forcePathStyle: false,
   endpoint: "https://tor1.digitaloceanspaces.com",
@@ -66,6 +59,7 @@ if (!server.s3Client) {
   server.decorate("s3Client", s3Client);
 }
 
+// INFO: decorate with cache
 const cache = new TTLCache({
   max: 200,
   ttl: 1 * 60 * 60 * 1_000, // one hour
@@ -78,6 +72,14 @@ const cache = new TTLCache({
 if (!server.cache) {
   server.decorate("cache", cache);
 }
+
+await server.register(FastifyVite, {
+  root: import.meta.dirname, // where to look for vite.config.js
+  dev: process.argv.includes("--dev"),
+  renderer: "@fastify/react",
+});
+
+await server.vite.ready();
 
 server.get("/healthcheck", async (_req, reply) => {
   try {
