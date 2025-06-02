@@ -10,7 +10,6 @@ import PhotoGrid from "../components/PhotoGrid";
 import { useRouteContext } from "@fastify/react/client";
 import { useTheme } from "@mui/material/styles";
 
-import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Suspense } from "react";
 
 // INFO: can't use `serverOnly=true` because then the scroll to lazy load images
@@ -23,38 +22,26 @@ export const streaming = true;
 
 export async function getData(ctx) {
   if (ctx.server) {
-    const { log } = ctx.server;
+    const { log, cache } = ctx.server;
     log.info({ "ctx.server": !!ctx.server }, "pages/index.jsx::getData");
 
+    // INFO: context executes first, populating `ctx.state.all`
+    // https://fastify-vite.dev/react/route-context#execution-order
     if (ctx.state.all) {
       const data = {};
 
       for (const item of ctx.state.all) {
-        try {
-          const value = ctx.server.cache.get(item.name);
-          if (value) {
-            log.info(`cache hit: ${item.name}`);
-            data[item.name] = value;
-          } else {
-            log.warn(`cache miss: ${item.name}`);
-            const bucket = ctx.server.getEnvs().DO_SPACE_BUCKET;
-            const command = new GetObjectCommand({
-              Bucket: bucket,
-              Key: item.name,
-            });
-            const response = await ctx.server.s3Client.send(command);
+        const value = cache.get(item.name);
+        if (value) {
+          log.debug(`cache hit: ${item.name}`);
+          data[item.name] = value;
+        } else {
+          log.warn(`cache miss: ${item.name}`);
 
-            const { Metadata } = response;
-
-            const { title = "Image Title", description = "Image Description" } =
-              Metadata;
-
-            ctx.server.cache.set(item.name, { title, description });
-            data[item.name] = { title, description };
-          }
-        } catch (err) {
-          log.error({ err }, err.message);
-          throw err;
+          data[item.name] = {
+            title: "Image Title",
+            description: "Image Description",
+          };
         }
       }
 
@@ -92,7 +79,7 @@ export default function Index() {
 
   return (
     <main>
-      <Hero url={`https://cdn.${domain}/_hero-header.jpg`} />
+      <Hero url={`https://cdn.${domain}/_hero-header-min.jpg`} />
       <Container>
         <Suspense fallback={<p>Loading...</p>}>
           <PhotoGrid />

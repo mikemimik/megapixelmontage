@@ -12,8 +12,8 @@
     "start": "node server.js",
     "dev": "npm run start -- --dev",
     "build": "vite build",
-    "preview": "npm run build && npm run start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preview": "npm run build && npm run start | pino-pretty",
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
@@ -40,6 +40,7 @@
     "@unhead/react": "2.0.9",
     "aos": "2.3.4",
     "fastify": "5.3.3",
+    "fastify-plugin": "5.0.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-intersection-observer": "9.16.0",

@@ -1,13 +1,18 @@
 import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
-import TTLCache from "@isaacs/ttlcache";
 
-import { S3 } from "@aws-sdk/client-s3";
+import PluginCache from "./utils/plugin-cache.js";
+import PluginSpaceAccess from "./utils/plugin-space-access.js";
+
+import createGroups from "./utils/util-createGroups.js";
 
 const server = Fastify({
   logger: process.argv.includes("--dev")
-    ? { transport: { target: "@fastify/one-line-logger" } }
+    ? {
+        transport: { target: "@fastify/one-line-logger" },
+        level: "debug",
+      }
     : true,
 });
 
@@ -44,34 +49,42 @@ await server.register(FastifyEnv, {
   },
 });
 
-// INFO: decorate with s3client
-const s3Client = new S3({
-  forcePathStyle: false,
+await server.register(PluginCache, {
+  ttl: 60 * 60 * 1_000 * 12, // 12 hours
+});
+
+// INFO: must be registered *after* `PluginCache`
+await server.register(PluginSpaceAccess, {
   endpoint: "https://tor1.digitaloceanspaces.com",
   region: "tor1",
-  credentials: {
-    accessKeyId: server.getEnvs().DO_SPACE_ACCESS_KEY_ID,
-    secretAccessKey: server.getEnvs().DO_SPACE_SECRET_KEY,
+  accessKeyId: server.getEnvs().DO_SPACE_ACCESS_KEY_ID,
+  secretAccessKey: server.getEnvs().DO_SPACE_SECRET_KEY,
+  bucket: server.getEnvs().DO_SPACE_BUCKET,
+
+  // INFO: need `function` declaration because need access to `this`
+  hydrateCache: async function hydrate() {
+    // INFO: `this` context: SpaceAccess class instance
+    const objects = await this.listObjects();
+
+    if (objects && objects.length) {
+      const groups = createGroups(objects);
+
+      const groupsCacheKey = "image:groups";
+      this.fastify.cache.set(groupsCacheKey, groups);
+
+      for (const [key, value] of Object.entries(groups)) {
+        const cacheKey = `image:group:${key}`;
+        this.fastify.cache.set(cacheKey, value);
+        this.cacheGroupKey.add(cacheKey);
+      }
+
+      for (const item of groups.all) {
+        const value = await this.getObject(item.name);
+        this.fastify.cache.set(item.name, value);
+      }
+    }
   },
 });
-
-if (!server.s3Client) {
-  server.decorate("s3Client", s3Client);
-}
-
-// INFO: decorate with cache
-const cache = new TTLCache({
-  max: 200,
-  ttl: 1 * 60 * 60 * 1_000, // one hour
-  updateAgeOnGet: true,
-  dispose(_value, key, reason) {
-    server.log.info(`cache:dispose - ${key} - ${reason}`);
-  },
-});
-
-if (!server.cache) {
-  server.decorate("cache", cache);
-}
 
 await server.register(FastifyVite, {
   root: import.meta.dirname, // where to look for vite.config.js
@@ -79,7 +92,27 @@ await server.register(FastifyVite, {
   renderer: "@fastify/react",
 });
 
+// INFO: initialise vite
 await server.vite.ready();
+
+// INFO: hydrate cache
+await server.space.hydrate();
+
+server.cache.on("cache:invalidation", (data) => {
+  server.log.info({ data }, "cache has been invalidated");
+
+  // INFO: using '.then' because callback to '.on' methods for events don't
+  // support async/await functions.
+  server.space
+    .hydrate()
+    .then(() => {
+      server.log.info({}, "rehydrate complete");
+    })
+    .catch((err) => {
+      // INFO: log the error but we can't throw here as it will kill the server
+      server.log.error({ err }, "failed to rehydrate cache");
+    });
+});
 
 server.get("/healthcheck", async (_req, reply) => {
   try {

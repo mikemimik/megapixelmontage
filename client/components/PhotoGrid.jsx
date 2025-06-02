@@ -40,15 +40,16 @@ const Overlay = ({ photo }) => {
 };
 
 export default function PhotoGrid() {
-  const { state, data, domain } = useRouteContext();
+  // INFO: snapshot is a version of `state`
+  const { snapshot, data, domain } = useRouteContext();
   const [selectedCollection, setSelectedCollection] = useState("all");
 
   const collection = useMemo(() => {
     switch (selectedCollection) {
       case "all":
-        return state.all;
+        return snapshot.all;
       default:
-        return state.groups[selectedCollection];
+        return snapshot.groups[selectedCollection];
     }
   }, [selectedCollection]);
 
@@ -83,7 +84,7 @@ export default function PhotoGrid() {
     <Box>
       <Container paddingY="" sx={{ paddingBottom: { xs: 4, sm: 6, md: 8 } }}>
         <Collections
-          collections={["all", ...Object.keys(state.groups)]}
+          collections={["all", ...Object.keys(snapshot.groups)]}
           onChange={(value) => {
             setSelectedCollection(value);
           }}
