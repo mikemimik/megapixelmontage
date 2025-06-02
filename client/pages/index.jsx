@@ -25,6 +25,8 @@ export async function getData(ctx) {
     const { log, cache } = ctx.server;
     log.info({ "ctx.server": !!ctx.server }, "pages/index.jsx::getData");
 
+    // INFO: context executes first, populating `ctx.state.all`
+    // https://fastify-vite.dev/react/route-context#execution-order
     if (ctx.state.all) {
       const data = {};
 
