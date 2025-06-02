@@ -33,7 +33,7 @@ export async function getData(ctx) {
       for (const item of ctx.state.all) {
         const value = cache.get(item.name);
         if (value) {
-          log.info(`cache hit: ${item.name}`);
+          log.debug(`cache hit: ${item.name}`);
           data[item.name] = value;
         } else {
           log.warn(`cache miss: ${item.name}`);
