@@ -1,5 +1,9 @@
 import fp from "fastify-plugin";
-import { S3, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3,
+  ListObjectsV2Command,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
 
 class PluginSpaceAccessError extends Error {
   constructor(message, options) {
@@ -37,21 +41,31 @@ class SpaceAccess {
       },
     });
 
+    // INFO: hydration state
+    this.hydrating = false;
+
     // INFO: set hydrate function
-    this.hydrateCache = hydrateCache;
+    this.hydrateCache = hydrateCache.bind(this);
 
     this.cacheGroupKey = new Set();
   }
 
   // INFO: expose hydrate function
   async hydrate(...args) {
+    if (this.hydrating) {
+      this.log.info({}, "hydrating cache inprogress");
+      return;
+    }
+
     try {
+      this.hydrating = true;
       this.log.info({}, "hydrating cache started");
       await this.hydrateCache(...args);
       this.log.info({}, "hydrating cache completed");
+      this.hydrating = false;
     } catch (err) {
       const msg = "failed to hydrate cache";
-      this.log.info({ err }, msg);
+      this.log.error({ err }, msg);
       throw new PluginSpaceAccessError(msg, { cause: err });
     }
   }
@@ -62,12 +76,14 @@ class SpaceAccess {
         Bucket: this.options.bucket,
       });
       const response = await this.client.send(command);
-      const { Contents } = response;
+      const { Contents, $metadata } = response;
 
-      // INFO: cache value
-      this.fastify.cache.set("", Contents);
+      if ($metadata.httpStatusCode >= 300) {
+        throw new Error("bad http status code", { cause: response });
+      }
 
-      return Contents;
+      const objectList = Contents.map(({ Key, ETag }) => ({ Key, ETag }));
+      return objectList;
     } catch (err) {
       const msg = "failed to list objects";
       this.log.error({ err }, msg);
@@ -77,21 +93,23 @@ class SpaceAccess {
 
   async getObject(key) {
     try {
-      const command = new GetObjectCommand({
+      const command = new HeadObjectCommand({
         Bucket: this.options.bucket,
         Key: key,
       });
       const response = await this.client.send(command);
-      const { Metadata } = response;
+      const { Metadata, $metadata } = response;
+
+      if ($metadata.httpStatusCode >= 300) {
+        throw new Error("bad http status code", { cause: response });
+      }
+
       const { title = "Image Title", description = "Image Description" } =
         Metadata;
 
-      const value = { title, description };
+      const objectData = { title, description };
 
-      // INFO: cache value
-      this.fastify.cache.set(key, value);
-
-      return value;
+      return objectData;
     } catch (err) {
       const msg = `failed to get object for key: ${key}`;
       this.log.error({ err }, msg);
