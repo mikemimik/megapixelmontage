@@ -9,7 +9,10 @@ import createGroups from "./utils/util-createGroups.js";
 
 const server = Fastify({
   logger: process.argv.includes("--dev")
-    ? { transport: { target: "@fastify/one-line-logger" } }
+    ? {
+        transport: { target: "@fastify/one-line-logger" },
+        level: "debug",
+      }
     : true,
 });
 
@@ -47,7 +50,7 @@ await server.register(FastifyEnv, {
 });
 
 await server.register(PluginCache, {
-  ttl: 60 * 60 * 1_000 * 72, // 72 hours
+  ttl: 60 * 60 * 1_000 * 12, // 12 hours
 });
 
 // INFO: must be registered *after* `PluginCache`
@@ -76,7 +79,8 @@ await server.register(PluginSpaceAccess, {
       }
 
       for (const item of groups.all) {
-        await this.getObject(item.name);
+        const value = await this.getObject(item.name);
+        this.fastify.cache.set(item.name, value);
       }
     }
   },
@@ -93,6 +97,22 @@ await server.vite.ready();
 
 // INFO: hydrate cache
 await server.space.hydrate();
+
+server.cache.on("cache:invalidation", (data) => {
+  server.log.info({ data }, "cache has been invalidated");
+
+  // INFO: using '.then' because callback to '.on' methods for events don't
+  // support async/await functions.
+  server.space
+    .hydrate()
+    .then(() => {
+      server.log.info({}, "rehydrate complete");
+    })
+    .catch((err) => {
+      // INFO: log the error but we can't throw here as it will kill the server
+      server.log.error({ err }, "failed to rehydrate cache");
+    });
+});
 
 server.get("/healthcheck", async (_req, reply) => {
   try {
