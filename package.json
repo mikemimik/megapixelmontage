@@ -19,8 +19,13 @@
     "type": "git",
     "url": "git+https://github.com/mikemimik/megapixelmontage.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "website",
+    "fastify",
+    "vite",
+    "digitalocean"
+  ],
+  "author": "Michael Perrotte",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/mikemimik/megapixelmontage/issues"
