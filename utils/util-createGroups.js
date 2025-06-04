@@ -33,7 +33,7 @@ export default function createGroups(objects = []) {
     };
 
     // INFO: if filename starts with underscore or has '-min', skip it
-    if (first.startsWith("_") || first.indexOf("-min") !== -1) {
+    if (first.startsWith("_") || last.indexOf("-min") !== -1) {
       return acc;
     }
 
