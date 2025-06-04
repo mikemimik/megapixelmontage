@@ -32,8 +32,8 @@ export default function createGroups(objects = []) {
       tag: object.ETag,
     };
 
-    // INFO: if filename starts with underscore, skip it
-    if (first.startsWith("_")) {
+    // INFO: if filename starts with underscore or has '-min', skip it
+    if (first.startsWith("_") || first.indexOf("-min") !== -1) {
       return acc;
     }
 
