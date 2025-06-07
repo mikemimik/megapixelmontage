@@ -39,7 +39,6 @@ export default function createGroups(objects = []) {
 
     // INFO: if last has length, and it doesn't contain `-min`, skip it
     if (last.length && last.indexOf("-min") < 0) {
-      console.log("first:", first, "last:", last);
       return acc;
     }
 
