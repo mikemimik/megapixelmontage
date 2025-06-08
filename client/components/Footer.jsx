@@ -36,6 +36,7 @@ const Footer = () => {
               }
               height={1}
               width={1}
+              loading="lazy"
             />
           </Box>
           <Box display="flex" flexWrap={"wrap"} alignItems={"center"}>
