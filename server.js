@@ -87,6 +87,12 @@ await server.register(PluginSpaceAccess, {
   },
 });
 
+await server.register(FastifyRateLimit, {
+  global: false,
+  max: 50,
+  timeWindow: "1 hour",
+});
+
 await server.register(FastifyVite, {
   root: import.meta.dirname, // where to look for vite.config.js
   dev: process.argv.includes("--dev"),
