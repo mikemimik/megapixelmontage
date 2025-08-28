@@ -54,7 +54,7 @@ class SpaceAccess {
   async hydrate(...args) {
     if (this.hydrating) {
       this.log.info({}, "hydrating cache inprogress");
-      return Promise.resolve();
+      return;
     }
 
     try {
