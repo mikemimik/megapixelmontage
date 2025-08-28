@@ -120,6 +120,12 @@ await server.space.hydrate();
 server.cache.on("cache:invalidation", (data) => {
   server.log.info({ data }, "cache has been invalidated");
 
+  // INFO: if already hydrating; bailout
+  if (server.space.hydrating) {
+    server.log.info({}, "hydrating cache inprogress");
+    return;
+  }
+
   // INFO: using '.then' because callback to '.on' methods for events don't
   // support async/await functions.
   server.space
