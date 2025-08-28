@@ -99,6 +99,18 @@ await server.register(FastifyVite, {
   renderer: "@fastify/react",
 });
 
+// INFO: add rate limiting to 404 handler
+server.setNotFoundHandler(
+  { preHandler: server.rateLimit() },
+  (request, reply) => {
+    return reply.code(404).send({
+      message: `${request.method}:${request.url} - not found`,
+      error: "Not Found",
+      statusCode: 404,
+    });
+  },
+);
+
 // INFO: initialise vite
 await server.vite.ready();
 
