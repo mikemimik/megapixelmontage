@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
+import FastifyRateLimit from "@fastify/rate-limit";
 
 import PluginCache from "./utils/plugin-cache.js";
 import PluginSpaceAccess from "./utils/plugin-space-access.js";
@@ -86,11 +87,29 @@ await server.register(PluginSpaceAccess, {
   },
 });
 
+await server.register(FastifyRateLimit, {
+  global: false,
+  max: 50,
+  timeWindow: "1 hour",
+});
+
 await server.register(FastifyVite, {
   root: import.meta.dirname, // where to look for vite.config.js
   dev: process.argv.includes("--dev"),
   renderer: "@fastify/react",
 });
+
+// INFO: add rate limiting to 404 handler
+server.setNotFoundHandler(
+  { preHandler: server.rateLimit() },
+  (request, reply) => {
+    return reply.code(404).send({
+      message: `${request.method}:${request.url} - not found`,
+      error: "Not Found",
+      statusCode: 404,
+    });
+  },
+);
 
 // INFO: initialise vite
 await server.vite.ready();
@@ -100,6 +119,12 @@ await server.space.hydrate();
 
 server.cache.on("cache:invalidation", (data) => {
   server.log.info({ data }, "cache has been invalidated");
+
+  // INFO: if already hydrating; bailout
+  if (server.space.hydrating) {
+    server.log.info({}, "hydrating cache inprogress");
+    return;
+  }
 
   // INFO: using '.then' because callback to '.on' methods for events don't
   // support async/await functions.
@@ -129,12 +154,41 @@ server.get("/healthcheck", async (_req, reply) => {
   }
 });
 
-server.get("/invalidate-cache", async (_req, reply) => {
-  server.cache.clear();
+server.get(
+  "/hydrate",
+  {
+    config: {
+      rateLimit: {
+        max: 1,
+        timeWindow: "30 minutes",
+        groupId: "cache-hydration",
+      },
+    },
+  },
+  async (_req, reply) => {
+    await server.space.hydrate();
 
-  // TODO: limit the number of times this can happen
-  // TODO: probably protect this endpoing
-  return reply.code(200).send({ cache: "clear" });
-});
+    return reply.code(200).send({ hydrate: true });
+  },
+);
+
+server.get(
+  "/invalidate-cache",
+  {
+    config: {
+      rateLimit: {
+        max: 1,
+        timeWindow: "30 minutes",
+        groupId: "cache-hydration",
+      },
+    },
+  },
+  async (_req, reply) => {
+    server.cache.clear();
+
+    // TODO: probably protect this endpoing
+    return reply.code(200).send({ cache: "clear" });
+  },
+);
 
 await server.listen({ host: "0.0.0.0", port: server.getEnvs().PORT });

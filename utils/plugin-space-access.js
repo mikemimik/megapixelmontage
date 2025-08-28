@@ -62,11 +62,12 @@ class SpaceAccess {
       this.log.info({}, "hydrating cache started");
       await this.hydrateCache(...args);
       this.log.info({}, "hydrating cache completed");
-      this.hydrating = false;
     } catch (err) {
       const msg = "failed to hydrate cache";
       this.log.error({ err }, msg);
       throw new PluginSpaceAccessError(msg, { cause: err });
+    } finally {
+      this.hydrating = false;
     }
   }
 

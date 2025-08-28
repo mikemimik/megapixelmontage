@@ -42,6 +42,11 @@ class Cache extends EventEmitter {
     this.log.debug({ key }, "getting key");
     return this.cache.get(key);
   }
+
+  clear() {
+    this.log.debug({}, "clearing cache");
+    this.cache.clear();
+  }
 }
 
 function plugin(fastify, options, done) {
