@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
+import FastifyRateLimit from "@fastify/rate-limit";
 
 import PluginCache from "./utils/plugin-cache.js";
 import PluginSpaceAccess from "./utils/plugin-space-access.js";
