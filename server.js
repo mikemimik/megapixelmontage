@@ -148,12 +148,41 @@ server.get("/healthcheck", async (_req, reply) => {
   }
 });
 
-server.get("/invalidate-cache", async (_req, reply) => {
-  server.cache.clear();
+server.get(
+  "/hydrate",
+  {
+    config: {
+      rateLimit: {
+        max: 1,
+        timeWindow: "30 minutes",
+        groupId: "cache-hydration",
+      },
+    },
+  },
+  async (_req, reply) => {
+    await server.space.hydrate();
 
-  // TODO: limit the number of times this can happen
-  // TODO: probably protect this endpoing
-  return reply.code(200).send({ cache: "clear" });
-});
+    return reply.code(200).send({ hydrate: true });
+  },
+);
+
+server.get(
+  "/invalidate-cache",
+  {
+    config: {
+      rateLimit: {
+        max: 1,
+        timeWindow: "30 minutes",
+        groupId: "cache-hydration",
+      },
+    },
+  },
+  async (_req, reply) => {
+    server.cache.clear();
+
+    // TODO: probably protect this endpoing
+    return reply.code(200).send({ cache: "clear" });
+  },
+);
 
 await server.listen({ host: "0.0.0.0", port: server.getEnvs().PORT });
