@@ -44,6 +44,7 @@ class Cache extends EventEmitter {
   }
 
   clear() {
+    this.log.debug({}, "clearing cache");
     this.cache.clear();
   }
 }
