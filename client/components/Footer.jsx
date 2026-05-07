@@ -61,7 +61,7 @@ const Footer = () => {
           color="text.secondary"
           gutterBottom
         >
-          &copy; megapixelmontage. 2025, OrionsBelt. All rights reserved
+          &copy; megapixelmontage. 2026, OrionsBelt. All rights reserved
         </Typography>
       </Grid>
     </Grid>
