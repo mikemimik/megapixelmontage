@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import FastifyVite from "@fastify/vite";
 import FastifyEnv from "@fastify/env";
 import FastifyRateLimit from "@fastify/rate-limit";
+import FastifyAuth0 from "@auth0/auth0-fastify";
 
 import PluginCache from "./utils/plugin-cache.js";
 import PluginSpaceAccess from "./utils/plugin-space-access.js";
@@ -26,6 +27,11 @@ await server.register(FastifyEnv, {
       "DO_SPACE_ACCESS_KEY_ID",
       "DO_SPACE_SECRET_KEY",
       "DO_SPACE_BUCKET",
+      "AUTH0_DOMAIN",
+      "AUTH0_CLIENT_ID",
+      "AUTH0_CLIENT_SECRET",
+      "AUTH0_APP_BASE_URL",
+      "AUTH0_SESSION_SECRET",
     ],
     properties: {
       PORT: {
@@ -46,9 +52,50 @@ await server.register(FastifyEnv, {
         nullable: false,
         minLength: 1,
       },
+      AUTH0_DOMAIN: {
+        type: "string",
+        nullable: false,
+        minLength: 1,
+      },
+      AUTH0_CLIENT_ID: {
+        type: "string",
+        nullable: false,
+        minLength: 1,
+      },
+      AUTH0_CLIENT_SECRET: {
+        type: "string",
+        nullable: false,
+        minLength: 1,
+      },
+      AUTH0_APP_BASE_URL: {
+        type: "string",
+        nullable: false,
+        minLength: 1,
+      },
+      AUTH0_SESSION_SECRET: {
+        type: "string",
+        nullable: false,
+        minLength: 1,
+      },
     },
   },
 });
+
+await server.register(FastifyAuth0, {
+  domain: server.getEnvs().AUTH0_DOMAIN,
+  clientId: server.getEnvs().AUTH0_CLIENT_ID,
+  clientSecret: server.getEnvs().AUTH0_CLIENT_SECRET,
+  appBaseUrl: server.getEnvs().AUTH0_APP_BASE_URL,
+  sessionSecret: server.getEnvs().AUTH0_SESSION_SECRET,
+});
+
+async function hasSessionPreHandler(request, reply) {
+  const session = await server.auth0Client.getSession({ request, reply });
+
+  if (!session) {
+    return reply.redirect(`/auth/login?returnTo=${request.url}`);
+  }
+}
 
 await server.register(PluginCache, {
   ttl: 60 * 60 * 1_000 * 12, // 12 hours
@@ -159,11 +206,12 @@ server.get(
   {
     config: {
       rateLimit: {
-        max: 1,
+        max: 2,
         timeWindow: "30 minutes",
         groupId: "cache-hydration",
       },
     },
+    preHandler: hasSessionPreHandler,
   },
   async (_req, reply) => {
     await server.space.hydrate();
@@ -177,11 +225,12 @@ server.get(
   {
     config: {
       rateLimit: {
-        max: 1,
+        max: 2,
         timeWindow: "30 minutes",
         groupId: "cache-hydration",
       },
     },
+    preHandler: hasSessionPreHandler,
   },
   async (_req, reply) => {
     server.cache.clear();
