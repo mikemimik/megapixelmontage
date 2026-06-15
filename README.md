@@ -19,10 +19,11 @@ hence fullstack application.
 
 > [!NOTE]
 > You will need a properly configured `.env` file in order to run all the
-> commands below.
+> commands below. See `.env.example` for the required keys.
 
 1. Clone the repository locally
-2. `nvm use` in the directory to gain the correct version of `node` and `npm`
+2. `nvm use` in the directory to gain the correct version of `node` (>=24) and
+   `npm` (>=11.4.2)
 3. `npm install` to install dependencies
 4. Run the `npm run dev` script to run the development server
 
